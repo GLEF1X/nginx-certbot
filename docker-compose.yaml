@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  nginx:
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: nginx
+    container_name: nginx
+    env_file:
+      - ".env"
+    healthcheck:
+      test: [ "CMD", "curl", "--silent", "--fail", "http://localhost" ]
+      interval: 45s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - ssl:/etc/letsencrypt
+      - ssl:/var/www/certbot
+
+  certbot:
+    build:
+      context: certbot
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ".env"
+    volumes:
+      - ssl:/etc/letsencrypt
+      - ssl:/var/www/certbot
+    depends_on:
+      nginx:
+        condition: service_healthy
+
+
+volumes:
+  ssl: {}
