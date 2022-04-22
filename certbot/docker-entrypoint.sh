@@ -12,6 +12,7 @@ domain=${domains[0]}
 
 data_path="/etc/letsencrypt"
 path="$data_path/live/$domain"
+path_to_cloudfare_credentials="/var/certbot/cloudfare/cloudfare.ini"
 
 rsa_key_size=${rsa_key_size:-4096}
 
@@ -43,13 +44,13 @@ if [ ! -f "$path/privkey.pem" ]; then
   fi
 
   certbot certonly \
-    --webroot -w /var/www/certbot \
+    --dns-cloudflare \
+    --dns-cloudflare-credentials $path_to_cloudfare_credentials \
     $staging_arg \
     $email_arg \
     $domain_args \
-    --rsa-key-size $rsa_key_size \
-    --agree-tos \
-    --force-renewal
+    --force-renewal \
+    --agree-tos
 
     echo "### Reloading nginx ..."
     curl --fail --silent --user ${nginx_api_user}:${nginx_api_password} http://nginx/nginx/reload

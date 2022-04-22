@@ -31,6 +31,7 @@ services:
     volumes:
       - ssl:/etc/letsencrypt
       - ssl:/var/www/certbot
+      - ./certbot/secrets/cloudfare.ini:/var/certbot/cloudfare/cloudfare.ini
     depends_on:
       nginx:
         condition: service_healthy

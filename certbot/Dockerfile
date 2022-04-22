@@ -1,4 +1,4 @@
-FROM certbot/certbot
+FROM certbot/dns-cloudflare
 
 RUN set -x \
 &&  apk add --no-cache \
